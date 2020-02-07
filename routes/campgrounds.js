@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router({mergeParams : true});
 var Campground = require("../models/campground");
 var middleware = require("../middleware");
+var Review = require("../models/review");
+var Comment = require("../models/comment")
 
 //INDEX- show all campgrounds
 router.get("/campgrounds",function(req,res){
@@ -50,7 +52,13 @@ router.get("/campgrounds/new", middleware.isLoggedIn, function(req,res){
 //SHOW- display info about particular campground using id
 router.get("/campgrounds/:id", function(req,res){
 	//find the campground with provided id
-	Campground.findById(req.params.id).populate("comments").exec(function(err,foundCampground){
+	Campground.findById(req.params.id)
+	.populate("comments")
+	.populate({
+		path : "reviews",
+		options : {sort : {createdAt : -1}}
+	})
+	.exec(function(err,foundCampground){
 		if(err) console.log(err);
 		else res.render("campgrounds/show",{campground : foundCampground});
 	});
@@ -65,6 +73,7 @@ router.get("/campgrounds/:id/edit", middleware.checkCampgroundOwnership, functio
 
 //UPDATE- update campground
 router.put("/campgrounds/:id", middleware.checkCampgroundOwnership, function(req,res){
+	delete req.body.campground.rating;
 	//find an update correct campground
 	Campground.findByIdAndUpdate(req.params.id, req.body.campground, {new : true},
 		function(err, updatedCampground){
@@ -74,11 +83,32 @@ router.put("/campgrounds/:id", middleware.checkCampgroundOwnership, function(req
 });
 
 //DESTROY- delete campground route
+// after deleting campground,also delete the comments and reviews belonging to that campground
 router.delete("/campgrounds/:id", middleware.checkCampgroundOwnership, function(req,res){
-	Campground.findByIdAndRemove(req.params.id, function(err){
-		if(err) res.redirect("/campgrounds");
-		else res.redirect("/campgrounds");
-	});
+	Campground.findById(req.params.id, function (err, campground) {
+        if (err) {
+            res.redirect("/campgrounds");
+        } else {
+            // deletes all comments associated with the campground
+            Comment.remove({"_id": {$in: campground.comments}}, function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.redirect("/campgrounds");
+                }
+                // deletes all reviews associated with the campground
+                Review.remove({"_id": {$in: campground.reviews}}, function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.redirect("/campgrounds");
+                    }
+                    //  delete the campground
+                    campground.remove();
+                    req.flash("success", "Campground deleted successfully!");
+                    res.redirect("/campgrounds");
+                });
+            });
+        }
+    });
 });
 
 function escapeRegex(text) {

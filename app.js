@@ -12,7 +12,8 @@ var express = require("express"),
 // requiring routes
 var commentRoutes = require("./routes/comments"),
 	campgroundRoutes = require("./routes/campgrounds"),
-	authRoutes = require("./routes/index");
+	authRoutes = require("./routes/index"),
+	reviewRoutes = require("./routes/reviews");
 
 mongoose.connect("mongodb://localhost:27017/yelp_camp_v12", {useNewUrlParser : true});
 
@@ -47,6 +48,7 @@ app.use(function(req, res, next){
 app.use(authRoutes);
 app.use(campgroundRoutes);
 app.use(commentRoutes);
+app.use("/campgrounds/:id",reviewRoutes);
 
 app.listen(3000,function(){
 	console.log("The YelpCamp server has started");
