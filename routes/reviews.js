@@ -32,7 +32,7 @@ router.get("/reviews/new",middleware.isLoggedIn,middleware.checkReviewExistence,
 // review create route - post request to create a new review
 router.post("/reviews",middleware.isLoggedIn,middleware.checkReviewExistence,function(req,res){
 	// first find the campground for which you want to add the review using it's id
-	Campground.findById(req,params.id,function(err,campground){
+	Campground.findById(req.params.id).populate("reviews").exec(function(err,campground){
 		if(err){
 			req.flash("error", err.message);
             return res.redirect("back");
@@ -55,9 +55,9 @@ router.post("/reviews",middleware.isLoggedIn,middleware.checkReviewExistence,fun
             campground.save();
             req.flash("success", "Your review has been successfully added.");
             res.redirect('/campgrounds/' + campground._id);
-		})
-	})
-})
+		});
+	});
+});
 
 
 // review edit route - display page to edit review
@@ -73,7 +73,7 @@ router.get("/reviews/:review_id/edit",middleware.checkReviewOwnership,function(r
 
 
 // review update route
-router.put("reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
+router.put("/reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
 	Review.findByIdAndUpdate(req.params.review_id,req.body.review,{new : true})
 	.then(function(updatedReview){
 		return Campground.findById(req.params.id).populate("reviews").exec();
@@ -94,7 +94,7 @@ router.put("reviews/:review_id",middleware.checkReviewOwnership,function(req,res
 
 
 // review delete route
-route.delete("/reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
+router.delete("/reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
 	Review.findByIdAndRemove(req.params.review_id)
 	.then(function(){
 		return Campground.findByIdAndUpdate(req.params.id,{$pull : {reviews : req.params.review_id}},{new : true})
@@ -123,7 +123,7 @@ function calculateAverage(reviews){
 	reviews.forEach(function(review){
 		sum += review.rating;
 	});
-	return sum / reviews.length;
+	return (sum/reviews.length);
 }
 
 module.exports = router;

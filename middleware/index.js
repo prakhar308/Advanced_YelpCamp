@@ -1,5 +1,6 @@
 var Campground = require("../models/campground");
 var Comment = require("../models/comment");
+var Review = require("../models/review")
 var middlewareObj = {};
 
 //middleware for Campground Authorization
@@ -84,7 +85,7 @@ middlewareObj.checkReviewExistence = function(req,res,next){
 			var foundUserReview = foundCampground.reviews.some(function(review){
 				return review.author.id.equals(req.user._id);
 			})
-			if(foundCampground){
+			if(foundUserReview){
 				req.flash("error", "You already wrote a review");
                 return res.redirect("/campgrounds/"+foundCampground._id);
 			}
