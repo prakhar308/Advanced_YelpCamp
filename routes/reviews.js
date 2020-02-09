@@ -25,7 +25,13 @@ router.get("/reviews",function(req,res){
 // review new route - display a page to add a review
 // middlewares - isLoggedIn and checkReviewExistence because we only want to allow 1 single review per user
 router.get("/reviews/new",middleware.isLoggedIn,middleware.checkReviewExistence,function(req,res){
-	res.render("reviews/new");
+	Campground.findById(req.params.id, function (err, campground) {
+        if (err) {
+            req.flash("error", err.message);
+            return res.redirect("back");
+        }
+        res.render("reviews/new", {campground: campground});
+    });
 })
 
 
@@ -37,6 +43,8 @@ router.post("/reviews",middleware.isLoggedIn,middleware.checkReviewExistence,fun
 			req.flash("error", err.message);
             return res.redirect("back");
 		}
+		// convert review rating from string to int
+		req.body.review.rating = parseInt(req.body.review.rating);
 		Review.create(req.body.review,function(err,review){
 			if(err){
 				req.flash("error", err.message);
