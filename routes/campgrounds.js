@@ -75,8 +75,8 @@ router.get("/campgrounds/:id/edit", middleware.checkCampgroundOwnership, functio
 router.put("/campgrounds/:id", middleware.checkCampgroundOwnership, function(req,res){
 	delete req.body.campground.rating;
 	//find an update correct campground
-	Campground.findByIdAndUpdate(req.params.id, req.body.campground, {new : true},
-		function(err, updatedCampground){
+	Campground.updateOne({"_id" : req.params.id}, req.body.campground, {new : true},
+		function(err){
 			if(err) res.redirect("/campgrounds");
 			else res.redirect("/campgrounds/" + req.params.id);
 	});
@@ -90,19 +90,19 @@ router.delete("/campgrounds/:id", middleware.checkCampgroundOwnership, function(
             res.redirect("/campgrounds");
         } else {
             // deletes all comments associated with the campground
-            Comment.remove({"_id": {$in: campground.comments}}, function (err) {
+            Comment.deleteMany({"_id": {$in: campground.comments}}, function (err) {
                 if (err) {
                     console.log(err);
                     return res.redirect("/campgrounds");
                 }
                 // deletes all reviews associated with the campground
-                Review.remove({"_id": {$in: campground.reviews}}, function (err) {
+                Review.deleteMany({"_id": {$in: campground.reviews}}, function (err) {
                     if (err) {
                         console.log(err);
                         return res.redirect("/campgrounds");
                     }
                     //  delete the campground
-                    campground.remove();
+                    campground.delete();
                     req.flash("success", "Campground deleted successfully!");
                     res.redirect("/campgrounds");
                 });

@@ -82,7 +82,11 @@ router.get("/reviews/:review_id/edit",middleware.checkReviewOwnership,function(r
 
 // review update route
 router.put("/reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
-	Review.findByIdAndUpdate(req.params.review_id,req.body.review,{new : true})
+	
+	// convert review rating from string to int
+	req.body.review.rating = parseInt(req.body.review.rating);
+	
+	Review.updateOne({"_id" : req.params.review_id},req.body.review,{new : true})
 	.then(function(updatedReview){
 		return Campground.findById(req.params.id).populate("reviews").exec();
 	})
@@ -103,9 +107,9 @@ router.put("/reviews/:review_id",middleware.checkReviewOwnership,function(req,re
 
 // review delete route
 router.delete("/reviews/:review_id",middleware.checkReviewOwnership,function(req,res){
-	Review.findByIdAndRemove(req.params.review_id)
+	Review.deleteOne({"_id" : req.params.review_id})
 	.then(function(){
-		return Campground.findByIdAndUpdate(req.params.id,{$pull : {reviews : req.params.review_id}},{new : true})
+		return Campground.findOneAndUpdate({"_id" : req.params.id},{$pull : {reviews : req.params.review_id}},{new : true})
 		.populate("reviews")
 		.exec(); 
 	})
