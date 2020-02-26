@@ -11,14 +11,14 @@ router.get("/campgrounds",function(req,res){
 	if(req.query.search){
 		const regex = new RegExp(escapeRegex(req.query.search), 'gi');
 		//get all campgrounds from db
-		Campground.find({name : regex},function(err,allCampground){
+		Campground.find({name : regex,isVerified : true},function(err,allCampground){
 			if(err) console.log(err);
 			else res.render("campgrounds/index", {campgrounds : allCampground, currentUser : req.user});
 		});
 	}
 	else{
 		//get all campgrounds from db
-		Campground.find({},function(err,allCampground){
+		Campground.find({isVerified : true},function(err,allCampground){
 			if(err) console.log(err);
 			else res.render("campgrounds/index", {campgrounds : allCampground, currentUser : req.user});
 		});
