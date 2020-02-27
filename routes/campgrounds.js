@@ -3,7 +3,9 @@ var router = express.Router({mergeParams : true});
 var Campground = require("../models/campground");
 var middleware = require("../middleware");
 var Review = require("../models/review");
-var Comment = require("../models/comment")
+var Comment = require("../models/comment");
+var User = require("../models/user");
+var Notification = require("../models/notification");
 
 //INDEX- show all campgrounds
 router.get("/campgrounds",function(req,res){
@@ -26,7 +28,7 @@ router.get("/campgrounds",function(req,res){
 });
 
 //CREATE- add new campground to db
-router.post("/campgrounds", middleware.isLoggedIn, function(req,res){
+router.post("/campgrounds", middleware.isLoggedIn, async function(req,res){
 	//get data from form and create a new campground object
 	var name = req.body.name;
 	var price = req.body.price;
@@ -37,11 +39,32 @@ router.post("/campgrounds", middleware.isLoggedIn, function(req,res){
 		username : req.user.username
 	}
 	var newCampground = {name : name, price : price,image : image, description : description, author : author};
-	//create a new campground and save to database
-	Campground.create(newCampground, function(err,newlyCreated){
-		if(err) console.log(err);
-		else res.redirect("/campgrounds"); 
-	});
+
+	try{
+		// create new Campground and save to db
+		let campground = await Campground.create(newCampground);
+		
+		// create new notification
+		let newNotification = {
+			username : req.user.username,
+			campgroundId : campground.id
+		}
+		// save to db
+		let notification = await Notification.create(newNotification);
+
+		// find admin and notify for verification
+		let admin = await User.findOne({isAdmin : true}).exec();
+		admin.notifications.push(notification);
+		admin.save();
+
+		// redirect to campground page
+		req.flash("success","Your campground has been successfully created and sent for verification");
+		res.redirect("/campgrounds");
+
+	} catch(err){
+		req.flash("error",err.message);
+		res.redirect("/campgrounds");
+	}
 });
 
 //NEW- display form to create new campground
