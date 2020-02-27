@@ -38,10 +38,25 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //call this function on every route
-app.use(function(req, res, next){
+app.use(async function(req, res, next){
 	res.locals.currentUser = req.user;
 	res.locals.error = req.flash("error");
 	res.locals.success = req.flash("success");
+	
+	// if any user is logged in then find all his unread notifications 
+	if(req.user){
+		try{
+			let user = await User.findById(req.user._id)
+							.populate({
+								path : 'notifications',
+								match : {isRead : false}
+							})
+							.exec();
+			res.locals.notifications = user.notifications.reverse();
+		} catch(err){
+			console.log(err.message);
+		}
+	}
 	next();
 });
 
