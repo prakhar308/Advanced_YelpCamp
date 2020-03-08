@@ -52,7 +52,7 @@ app.use(async function(req, res, next){
 								match : {isRead : false}
 							})
 							.exec();
-			res.locals.notifications = user.notifications.reverse();
+			res.locals.unreadNotificationCount = user.notifications.length;
 		} catch(err){
 			console.log(err.message);
 		}
