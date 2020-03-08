@@ -21,11 +21,11 @@
 						<li><a href="/register">Sign Up</a></li>
 					<% } else { %>
 						<li>
-							<a href="#" class="notification">
+							<a href="/notifications" class="notification">
 								<i class="far fa-bell fa-2x"></i>
 								<!-- if current user has unread notifications
 									then display circle on bell icon -->
-								<% if(notifications.length){ %>
+								<% if(unreadNotificationCount){ %>
 									<span class="badge"></span>
 								<% } %>
 							</a>
