@@ -30,3 +30,31 @@
   border-radius: 50%;
   background-color: red;
 }
+
+.unreadNotification {
+  float: left;
+  width: 3%;
+  visibility: visible;
+}
+
+.unreadNotification .badge{
+  background-color: #337ab7;
+  width: 2px;
+  height: 13px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.notification-title {
+  float: left;
+  width: 90%;
+}
+
+.notification-date {
+  float: right;
+  width: 7%;
+}
+
+.notification-item {
+  height: 25px;
+}

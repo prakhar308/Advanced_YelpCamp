@@ -1,0 +1,22 @@
+<% include ./partials/header %>
+
+<div class="container">
+    <div style="width: 80%; margin: 10px auto;font-size: medium;" class="list-group">
+        <li class="list-group-item active">Notifications</li>
+        <% allNotifications.forEach(function(notification){ %>
+            <a 
+                <% if(notification.isRead){ %>
+                    style="background-color:  #f6f8fa;"
+                <% } %>
+                href="/notifications/<%= notification._id %>" class="list-group-item">
+                <div class="notification-item">
+                    <div class="unreadNotification"><span class="badge"></span></div>
+                    <div class="notification-title"><%= notification.username %> created a new campground : <strong>campground_name</strong></div>
+                    <div class="notification-date">date</div>
+                </div>
+            </a>
+        <% }) %>
+    </div>
+</div>
+
+<% include ./partials/footer %>
