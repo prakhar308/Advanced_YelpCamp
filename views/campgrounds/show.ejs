@@ -23,6 +23,10 @@
                             <button class="btn btn-danger">Delete</button>
                         </form>
                     <% } %>
+                    <!--Display approve button to admin-->
+                    <% if(currentUser && currentUser.isAdmin){ %>
+                        <a class = "btn btn-success btn-md" href = "/campgrounds/<%= campground._id %>/approve">Approve</a>
+                    <% } %>
                     <div style="margin-top: 10px;">
                         <a class="btn btn-default" href="/campgrounds"><i class="fa fa-arrow-left"></i> Go back</a>
                     </div>
