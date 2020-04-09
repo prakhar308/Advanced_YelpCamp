@@ -134,6 +134,37 @@ router.delete("/campgrounds/:id", middleware.checkCampgroundOwnership, function(
     });
 });
 
+
+// GET - Campground verification route
+// approve the campground and notify the user about it's approval
+router.get("/campgrounds/:id/approve", middleware.isLoggedIn, middleware.isAdmin, async function(req,res){
+	try{
+		// find campground
+		let campground = await Campground.findById(req.params.id);
+		// verifiy the campground
+		campground.isVerified = true;
+		await campground.save();
+		
+		// create new Notification for campground owner
+		let newNotification = {
+			username: req.user.username,
+			campgroundId: req.params.id
+		}
+		const notification = await Notification.create(newNotification);
+		
+		// find campground owner and send notification
+		let owner = await User.findById(campground.author.id);
+		owner.notifications.push(notification);
+		await owner.save();
+
+		res.redirect("/campgrounds");
+	} catch(err){
+		req.flash("err", err.message);
+		res.redirect("back");
+	}
+})
+
+
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
