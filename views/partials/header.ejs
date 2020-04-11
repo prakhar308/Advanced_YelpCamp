@@ -5,6 +5,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/stylesheets/main.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="https://kit.fontawesome.com/a4e92cf0e4.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 
@@ -19,6 +20,16 @@
 						<li><a href="/login">Login</a></li>
 						<li><a href="/register">Sign Up</a></li>
 					<% } else { %>
+						<li>
+							<a href="/notifications" class="notification">
+								<i class="far fa-bell fa-2x"></i>
+								<!-- if current user has unread notifications
+									then display circle on bell icon -->
+								<% if(unreadNotificationCount){ %>
+									<span class="badge"></span>
+								<% } %>
+							</a>
+						</li>
 						<li><a href="#">Signed In As <%= currentUser.username %></a></li>
 						<li><a href="/logout">Logout</a></li>
 					<% } %> 

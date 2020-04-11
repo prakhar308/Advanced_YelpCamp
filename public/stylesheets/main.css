@@ -9,3 +9,52 @@
 .checked {
 	color: orange;
 }
+
+.notification {
+  /*background-color: #555;*/
+  color: white;
+  text-decoration: none;
+  padding: 15px 26px;
+  position: relative;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.notification .badge {
+  width: 7px;
+  height: 12px;
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  display: inline-block;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.unreadNotification {
+  float: left;
+  width: 3%;
+  visibility: visible;
+}
+
+.unreadNotification .badge{
+  background-color: #337ab7;
+  width: 2px;
+  height: 13px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.notification-title {
+  float: left;
+  width: 90%;
+}
+
+.notification-date {
+  float: right;
+  width: 7%;
+}
+
+.notification-item {
+  height: 25px;
+}
