@@ -11,8 +11,8 @@
                 href="/notifications/<%= notification._id %>" class="list-group-item">
                 <div class="notification-item">
                     <div class="unreadNotification"><span class="badge"></span></div>
-                    <div class="notification-title"><%= notification.username %> created a new campground : <strong>campground_name</strong></div>
-                    <div class="notification-date">date</div>
+                    <div class="notification-title"><%= notification.text %></div>
+                    <div class="notification-date"><%= notification.createdAt.toDateString() %></div>
                 </div>
             </a>
         <% }) %>

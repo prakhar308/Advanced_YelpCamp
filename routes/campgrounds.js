@@ -46,7 +46,7 @@ router.post("/campgrounds", middleware.isLoggedIn, async function(req,res){
 		
 		// create new notification
 		let newNotification = {
-			username : req.user.username,
+			text: `${req.user.username} created a new campground: ${req.body.name}`,
 			campgroundId : campground.id
 		}
 		// save to db
@@ -147,7 +147,7 @@ router.get("/campgrounds/:id/approve", middleware.isLoggedIn, middleware.isAdmin
 		
 		// create new Notification for campground owner
 		let newNotification = {
-			username: req.user.username,
+			text: `Your campground: ${campground.name} has been approved`,
 			campgroundId: req.params.id
 		}
 		const notification = await Notification.create(newNotification);

@@ -16,6 +16,7 @@ var commentRoutes = require("./routes/comments"),
 	reviewRoutes = require("./routes/reviews");
 
 mongoose.connect("mongodb://localhost:27017/yelp_camp_v12", {useNewUrlParser : true});
+mongoose.set('debug',true);
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.set("view engine","ejs");
